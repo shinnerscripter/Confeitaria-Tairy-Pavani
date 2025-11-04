@@ -36,24 +36,24 @@
             padding: 0 15px;
         }
         
-        /* Header e Navegação */
+        /* Header e Navegação - OTIMIZADO PARA MOBILE */
         header {
             background-color: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
             z-index: 100;
+            padding: 10px 0;
         }
         
         .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
         }
         
         .logo {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: var(--secondary-color);
         }
@@ -68,7 +68,7 @@
         }
         
         nav ul li {
-            margin-left: 25px;
+            margin-left: 20px;
         }
         
         nav ul li a {
@@ -76,6 +76,7 @@
             color: var(--dark-color);
             font-weight: 500;
             transition: color 0.3s;
+            font-size: 0.9rem;
         }
         
         nav ul li a:hover {
@@ -86,6 +87,41 @@
             display: none;
             font-size: 1.5rem;
             cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+        }
+        
+        /* Menu Mobile Expandido */
+        .mobile-nav {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 99;
+        }
+        
+        .mobile-nav.active {
+            display: block;
+        }
+        
+        .mobile-nav ul {
+            flex-direction: column;
+            padding: 15px 0;
+        }
+        
+        .mobile-nav ul li {
+            margin: 0;
+            text-align: center;
+        }
+        
+        .mobile-nav ul li a {
+            display: block;
+            padding: 12px 20px;
+            font-size: 1rem;
         }
         
         /* Hero Section */
@@ -110,13 +146,13 @@
         }
         
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: 3rem;
             margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         
         .hero p {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin-bottom: 30px;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
             max-width: 600px;
@@ -239,51 +275,12 @@
             left: 25%;
         }
         
-        /* Sobre */
-        .about-content {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-        }
-        
-        .about-text {
-            flex: 1;
-        }
-        
-        .about-image {
-            flex: 1;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .about-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        
-        /* Carrosséis de Produtos */
-        .carousel-section {
-            margin-bottom: 60px;
-        }
-        
-        .carousel-container {
-            position: relative;
-            overflow: hidden;
+        /* Produtos em Grade - PARA TODOS OS DISPOSITIVOS */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
             padding: 20px 0;
-        }
-        
-        .carousel {
-            display: flex;
-            transition: transform 0.5s ease;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            touch-action: pan-y;
-            gap: 20px;
-            padding: 0 10px;
         }
         
         .product-card {
@@ -292,9 +289,6 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s;
-            min-width: 280px;
-            flex-shrink: 0;
-            position: relative;
             display: flex;
             flex-direction: column;
         }
@@ -379,63 +373,28 @@
             text-align: center;
         }
         
-        /* Setas do carrossel */
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(255, 255, 255, 0.9);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        /* Sobre */
+        .about-content {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 10;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s;
-            -webkit-tap-highlight-color: transparent;
+            gap: 50px;
         }
         
-        .carousel-btn:hover {
-            background-color: white;
-            transform: translateY(-50%) scale(1.1);
+        .about-text {
+            flex: 1;
         }
         
-        .carousel-btn.hidden {
-            opacity: 0.3;
-            pointer-events: none;
+        .about-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
-        .carousel-btn.prev {
-            left: 10px;
-        }
-        
-        .carousel-btn.next {
-            right: 10px;
-        }
-        
-        /* Indicadores do carrossel */
-        .carousel-indicators {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
-        }
-        
-        .carousel-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #ddd;
-            transition: background-color 0.3s;
-        }
-        
-        .carousel-indicator.active {
-            background-color: var(--accent-color);
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
         
         /* Contato */
@@ -502,10 +461,10 @@
             background-color: var(--secondary-color);
         }
         
-        /* WhatsApp Flutuante */
+        /* WhatsApp Flutuante - APENAS UM BOTÃO */
         .whatsapp-float {
             position: fixed;
-            bottom: 100px;
+            bottom: 30px;
             right: 30px;
             background-color: #25D366;
             color: white;
@@ -519,6 +478,7 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             z-index: 100;
             transition: transform 0.3s;
+            text-decoration: none;
         }
         
         .whatsapp-float:hover {
@@ -591,24 +551,19 @@
         /* Responsividade */
         @media (max-width: 768px) {
             .header-container {
-                flex-direction: column;
+                padding: 5px 0;
+            }
+            
+            .logo {
+                font-size: 1.3rem;
             }
             
             nav ul {
-                margin-top: 20px;
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            nav ul li {
-                margin: 10px 0;
+                display: none;
             }
             
             .mobile-menu {
                 display: block;
-                position: absolute;
-                top: 20px;
-                right: 20px;
             }
             
             .hero-content {
@@ -618,7 +573,11 @@
             }
             
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
             }
             
             .order-container {
@@ -644,90 +603,64 @@
                 flex-direction: column;
             }
             
-            /* Setas visíveis em mobile */
-            .carousel-btn {
-                display: flex;
-                width: 45px;
-                height: 45px;
-                font-size: 1.3rem;
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
             }
             
-            .carousel-btn.prev {
-                left: 5px;
-            }
-            
-            .carousel-btn.next {
-                right: 5px;
-            }
-            
-            .product-card {
-                min-width: calc(50% - 20px);
-            }
-            
-            .carousel-indicators {
-                display: flex;
+            .whatsapp-float {
+                bottom: 90px;
+                right: 20px;
+                width: 55px;
+                height: 55px;
+                font-size: 1.6rem;
             }
         }
         
         @media (max-width: 480px) {
-            .product-card {
-                min-width: calc(100% - 20px);
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
             
             .hero h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             .hero p {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
             
-            .carousel-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-            }
-            
-            .carousel {
-                gap: 15px;
-                padding: 0 5px;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .carousel {
-                justify-content: center;
-                flex-wrap: wrap;
-                gap: 25px;
-                transform: none !important;
-            }
-            
-            .carousel-btn {
-                display: none;
-            }
-            
-            .product-card {
-                min-width: 280px;
-                flex: 0 0 auto;
+            .section-title h2 {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
+    <!-- Header Compacto para Mobile -->
     <header>
         <div class="container header-container">
             <div class="logo">Confeitaria <span>Tairy Pavani</span></div>
-            <div class="mobile-menu">☰</div>
-            <nav>
+            <button class="mobile-menu">☰</button>
+            <nav class="desktop-nav">
                 <ul>
                     <li><a href="#home">Início</a></li>
-                    <li><a href="#about">Sobre Mim</a></li>
                     <li><a href="#products">Produtos</a></li>
-                    <li><a href="#contact">Contato</a></li>
+                    <li><a href="#about">Sobre Mim</a></li>
+                    <li><a href="#contact">Faça seu pedido</a></li>
                 </ul>
             </nav>
         </div>
+        <!-- Menu Mobile Expandido -->
+        <nav class="mobile-nav">
+            <ul>
+                <li><a href="#home">Início</a></li>
+                <li><a href="#products">Produtos</a></li>
+                <li><a href="#about">Sobre Mim</a></li>
+                <li><a href="#contact">Faça seu pedido</a></li>
+            </ul>
+        </nav>
     </header>
 
     <!-- Hero Section -->
@@ -753,6 +686,39 @@
         </div>
     </section>
 
+    <!-- Produtos -->
+    <section id="products">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nossos Produtos</h2>
+            </div>
+            
+            <!-- Bolos em Grade -->
+            <div style="margin-bottom: 60px;">
+                <h3 style="text-align: center; margin-bottom: 30px; color: var(--secondary-color);">🍰 Bolos</h3>
+                <div class="products-grid" id="bolos-grid">
+                    <!-- Bolos serão inseridos via JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Mousses em Grade -->
+            <div style="margin-bottom: 60px;">
+                <h3 style="text-align: center; margin-bottom: 30px; color: var(--secondary-color);">🍮 Mousses</h3>
+                <div class="products-grid" id="mousses-grid">
+                    <!-- Mousses serão inseridos via JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Doces em Grade -->
+            <div style="margin-bottom: 60px;">
+                <h3 style="text-align: center; margin-bottom: 30px; color: var(--secondary-color);">🍯 Doces e Delícias</h3>
+                <div class="products-grid" id="doces-grid">
+                    <!-- Doces serão inseridos via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Sobre Mim -->
     <section id="about">
         <div class="container">
@@ -775,59 +741,11 @@
         </div>
     </section>
 
-    <!-- Produtos -->
-    <section id="products">
-        <div class="container">
-            <div class="section-title">
-                <h2>Nossos Produtos</h2>
-            </div>
-            
-            <!-- Carrossel de Bolos -->
-            <div class="carousel-section">
-                <h3 style="text-align: center; margin-bottom: 20px; color: var(--secondary-color);">🍰 Bolos</h3>
-                <div class="carousel-container">
-                    <button class="carousel-btn prev hidden" id="bolos-prev">❮</button>
-                    <div class="carousel" id="bolos-carousel">
-                        <!-- Bolos serão inseridos via JavaScript -->
-                    </div>
-                    <button class="carousel-btn next" id="bolos-next">❯</button>
-                    <div class="carousel-indicators" id="bolos-indicators"></div>
-                </div>
-            </div>
-            
-            <!-- Carrossel de Mousses -->
-            <div class="carousel-section">
-                <h3 style="text-align: center; margin-bottom: 20px; color: var(--secondary-color);">🍮 Mousses</h3>
-                <div class="carousel-container">
-                    <button class="carousel-btn prev hidden" id="mousses-prev">❮</button>
-                    <div class="carousel" id="mousses-carousel">
-                        <!-- Mousses serão inseridos via JavaScript -->
-                    </div>
-                    <button class="carousel-btn next" id="mousses-next">❯</button>
-                    <div class="carousel-indicators" id="mousses-indicators"></div>
-                </div>
-            </div>
-            
-            <!-- Carrossel de Doces -->
-            <div class="carousel-section">
-                <h3 style="text-align: center; margin-bottom: 20px; color: var(--secondary-color);">🍯 Doces e Delícias</h3>
-                <div class="carousel-container">
-                    <button class="carousel-btn prev hidden" id="doces-prev">❮</button>
-                    <div class="carousel" id="doces-carousel">
-                        <!-- Doces serão inseridos via JavaScript -->
-                    </div>
-                    <button class="carousel-btn next" id="doces-next">❯</button>
-                    <div class="carousel-indicators" id="doces-indicators"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Contato -->
     <section id="contact">
         <div class="container">
             <div class="section-title">
-                <h2>Entre em Contato</h2>
+                <h2>Faça seu pedido</h2>
             </div>
             <div class="contact-container">
                 <div class="contact-info">
@@ -839,21 +757,21 @@
                 <div class="contact-form">
                     <form id="contactForm">
                         <div class="form-group">
-                            <label for="name">Nome</label>
+                            <label for="name">Nome *</label>
                             <input type="text" id="name" name="name" required>
                         </div>
                         <div class="form-group">
-                            <label for="message">Mensagem</label>
-                            <textarea id="message" name="message" placeholder="Descreva sua encomenda ou dúvida..." required></textarea>
+                            <label for="message">Mensagem (opcional)</label>
+                            <textarea id="message" name="message" placeholder="Descreva sua encomenda ou dúvida..."></textarea>
                         </div>
-                        <button type="submit" class="form-btn">Enviar Pedido via WhatsApp</button>
+                        <button type="submit" class="form-btn">Enviar Mensagem via WhatsApp</button>
                     </form>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- WhatsApp Flutuante -->
+    <!-- WhatsApp Flutuante - APENAS UM BOTÃO -->
     <a href="https://wa.me/5544999381328?text=Olá! Gostaria de fazer um orçamento." class="whatsapp-float" target="_blank">
         <i>💬</i>
     </a>
@@ -873,9 +791,9 @@
             <div class="footer-col">
                 <h3>Links Rápidos</h3>
                 <a href="#home">Início</a>
-                <a href="#about">Sobre Mim</a>
                 <a href="#products">Produtos</a>
-                <a href="#contact">Contato</a>
+                <a href="#about">Sobre Mim</a>
+                <a href="#contact">Faça seu pedido</a>
             </div>
             <div class="footer-col">
                 <h3>Contato</h3>
@@ -921,29 +839,12 @@
 
         // Carrinho de compras
         let carrinho = {};
-        let carouselPositions = {
-            'bolos': 0,
-            'mousses': 0,
-            'doces': 0
-        };
 
-        // Inicializar carrosséis
-        function inicializarCarrosseis() {
+        // Inicializar produtos
+        function inicializarProdutos() {
             for (const categoria in produtos) {
-                const carousel = document.getElementById(`${categoria}-carousel`);
-                const indicatorsContainer = document.getElementById(`${categoria}-indicators`);
-                const prevBtn = document.getElementById(`${categoria}-prev`);
-                const nextBtn = document.getElementById(`${categoria}-next`);
+                const grid = document.getElementById(`${categoria}-grid`);
                 
-                // Criar indicadores
-                for (let i = 0; i < produtos[categoria].length; i++) {
-                    const indicator = document.createElement('div');
-                    indicator.className = 'carousel-indicator';
-                    if (i === 0) indicator.classList.add('active');
-                    indicatorsContainer.appendChild(indicator);
-                }
-                
-                // Adicionar produtos ao carrossel
                 produtos[categoria].forEach((produto, index) => {
                     const productCard = document.createElement('div');
                     productCard.className = 'product-card';
@@ -961,7 +862,7 @@
                             </div>
                         </div>
                     `;
-                    carousel.appendChild(productCard);
+                    grid.appendChild(productCard);
                 });
                 
                 // Inicializar contadores no carrinho
@@ -969,9 +870,6 @@
                     const chave = `${categoria}-${index}`;
                     carrinho[chave] = 0;
                 });
-
-                // Verificar se precisa de carrossel (apenas para mobile/tablet)
-                verificarNecessidadeCarrossel(categoria, prevBtn, nextBtn);
             }
             
             // Configurar botões de quantidade
@@ -993,104 +891,6 @@
                     atualizarSubtotal();
                 });
             });
-            
-            // Configurar botões de navegação do carrossel
-            document.querySelectorAll('.carousel-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const categoria = this.id.split('-')[0];
-                    const direction = this.classList.contains('next') ? 1 : -1;
-                    const cardWidth = 300; // Largura do card + gap
-                    const totalCards = produtos[categoria].length;
-                    
-                    moverCarrossel(categoria, direction, totalCards, cardWidth);
-                });
-            });
-
-            // Verificar redimensionamento da tela
-            window.addEventListener('resize', function() {
-                for (const categoria in produtos) {
-                    const prevBtn = document.getElementById(`${categoria}-prev`);
-                    const nextBtn = document.getElementById(`${categoria}-next`);
-                    verificarNecessidadeCarrossel(categoria, prevBtn, nextBtn);
-                }
-            });
-        }
-
-        // Verificar se precisa de carrossel
-        function verificarNecessidadeCarrossel(categoria, prevBtn, nextBtn) {
-            const carousel = document.getElementById(`${categoria}-carousel`);
-            const container = carousel.parentElement;
-            
-            if (window.innerWidth >= 1200) {
-                // Desktop - mostrar todos os itens
-                carousel.style.transform = 'none';
-                prevBtn.classList.add('hidden');
-                nextBtn.classList.add('hidden');
-            } else {
-                // Mobile/Tablet - ativar carrossel
-                carouselPositions[categoria] = 0;
-                carousel.style.transform = 'translateX(0)';
-                atualizarBotoesCarrossel(categoria);
-            }
-        }
-
-        // Função para mover o carrossel
-        function moverCarrossel(categoria, direction, totalCards, cardWidth) {
-            if (window.innerWidth >= 1200) return;
-            
-            const carousel = document.getElementById(`${categoria}-carousel`);
-            const container = carousel.parentElement;
-            const indicators = document.querySelectorAll(`#${categoria}-indicators .carousel-indicator`);
-            
-            // Calcular quantos cards cabem na tela
-            const cardsPerView = Math.floor(container.offsetWidth / cardWidth);
-            
-            // Calcular nova posição
-            let newPosition = carouselPositions[categoria] + (direction * cardsPerView * cardWidth);
-            
-            // Limitar a posição (sem loop infinito)
-            const maxPosition = Math.max(0, (totalCards - cardsPerView) * cardWidth);
-            newPosition = Math.max(0, Math.min(newPosition, maxPosition));
-            
-            // Atualizar indicadores
-            const activeIndex = Math.floor(newPosition / (cardWidth * cardsPerView));
-            indicators.forEach((indicator, index) => {
-                indicator.classList.toggle('active', index === activeIndex);
-            });
-            
-            // Aplicar transformação
-            carousel.style.transition = 'transform 0.5s ease';
-            carousel.style.transform = `translateX(-${newPosition}px)`;
-            carouselPositions[categoria] = newPosition;
-            
-            // Atualizar estado dos botões
-            atualizarBotoesCarrossel(categoria);
-        }
-
-        // Atualizar estado dos botões do carrossel
-        function atualizarBotoesCarrossel(categoria) {
-            if (window.innerWidth >= 1200) return;
-            
-            const prevBtn = document.getElementById(`${categoria}-prev`);
-            const nextBtn = document.getElementById(`${categoria}-next`);
-            const container = document.getElementById(`${categoria}-carousel`).parentElement;
-            const totalCards = produtos[categoria].length;
-            const cardWidth = 300;
-            const cardsPerView = Math.floor(container.offsetWidth / cardWidth);
-            const maxPosition = Math.max(0, (totalCards - cardsPerView) * cardWidth);
-            
-            // Mostrar/ocultar botões conforme a posição
-            if (carouselPositions[categoria] <= 0) {
-                prevBtn.classList.add('hidden');
-            } else {
-                prevBtn.classList.remove('hidden');
-            }
-            
-            if (carouselPositions[categoria] >= maxPosition) {
-                nextBtn.classList.add('hidden');
-            } else {
-                nextBtn.classList.remove('hidden');
-            }
         }
 
         // Atualizar subtotal
@@ -1110,10 +910,17 @@
 
         // Menu Mobile
         document.querySelector('.mobile-menu').addEventListener('click', function() {
-            document.querySelector('nav ul').classList.toggle('active');
+            document.querySelector('.mobile-nav').classList.toggle('active');
         });
 
-        // Form Submission
+        // Fechar menu mobile ao clicar em um link
+        document.querySelectorAll('.mobile-nav a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelector('.mobile-nav').classList.remove('active');
+            });
+        });
+
+        // Form Submission - CAMPOS OBRIGATÓRIOS AJUSTADOS
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1121,31 +928,47 @@
             const name = document.getElementById('name').value;
             const message = document.getElementById('message').value;
             
-            // Construir mensagem do pedido
-            let pedidoTexto = `Olá meu nome é ${name} e eu gostaria de pedir:\n\n`;
+            // Verificar apenas o nome (campo obrigatório)
+            if (!name.trim()) {
+                alert('Por favor, informe seu nome.');
+                return;
+            }
             
-            // Adicionar itens do carrinho à mensagem
+            // Construir mensagem do pedido
+            let pedidoTexto = `Olá! Meu nome é ${name}.`;
+            
+            // Adicionar itens do carrinho à mensagem (se houver)
             let temPedido = false;
             let totalPedido = 0;
             
             for (const chave in carrinho) {
                 if (carrinho[chave] > 0) {
+                    if (!temPedido) {
+                        pedidoTexto += `\n\nGostaria de pedir:\n`;
+                        temPedido = true;
+                    }
                     const [categoria, index] = chave.split('-');
                     const produto = produtos[categoria][parseInt(index)];
                     const subtotalItem = produto.preco * carrinho[chave];
                     pedidoTexto += `${carrinho[chave]}x ${produto.nome} - R$ ${subtotalItem.toFixed(2).replace('.', ',')}\n`;
                     totalPedido += subtotalItem;
-                    temPedido = true;
                 }
             }
             
-            if (!temPedido) {
-                alert('Por favor, adicione pelo menos um item ao seu pedido antes de enviar.');
-                return;
+            // Adicionar total se houver pedido
+            if (temPedido) {
+                pedidoTexto += `\nTotal: R$ ${totalPedido.toFixed(2).replace('.', ',')}`;
             }
             
-            pedidoTexto += `\nTotal: R$ ${totalPedido.toFixed(2).replace('.', ',')}`;
-            pedidoTexto += `\n\nMensagem adicional: ${message}`;
+            // Adicionar mensagem adicional se fornecida
+            if (message.trim()) {
+                pedidoTexto += `\n\nMensagem adicional: ${message}`;
+            }
+            
+            // Se não há pedido nem mensagem, enviar mensagem simples
+            if (!temPedido && !message.trim()) {
+                pedidoTexto += `\n\nGostaria de saber mais sobre seus produtos e fazer um orçamento.`;
+            }
             
             // Codificar mensagem para URL
             const encodedMessage = encodeURIComponent(pedidoTexto);
@@ -1153,17 +976,11 @@
             // Abrir WhatsApp com a mensagem
             window.open(`https://wa.me/5544999381328?text=${encodedMessage}`, '_blank');
             
-            // Limpar formulário e carrinho
+            // Limpar formulário (opcional - manter carrinho)
             document.getElementById('contactForm').reset();
-            for (const chave in carrinho) {
-                carrinho[chave] = 0;
-                const [categoria, index] = chave.split('-');
-                document.getElementById(`qty-${chave}`).textContent = '0';
-            }
-            atualizarSubtotal();
             
             // Feedback para o usuário
-            alert('Obrigada pelo seu pedido! Você será redirecionado para o WhatsApp para finalizar.');
+            alert('Obrigada! Você será redirecionado para o WhatsApp.');
         });
 
         // Smooth Scrolling
@@ -1180,11 +997,6 @@
                         top: targetElement.offsetTop - 80,
                         behavior: 'smooth'
                     });
-                    
-                    // Fechar menu mobile após clicar em um link
-                    if(window.innerWidth <= 768) {
-                        document.querySelector('nav ul').classList.remove('active');
-                    }
                 }
             });
         });
@@ -1208,7 +1020,7 @@
         // Verificar a posição ao carregar a página e ao rolar
         window.addEventListener('load', function() {
             toggleOrderButton();
-            inicializarCarrosseis();
+            inicializarProdutos();
         });
         window.addEventListener('scroll', toggleOrderButton);
     </script>
