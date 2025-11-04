@@ -285,7 +285,8 @@
             -ms-user-select: none;
         }
         
-        .carousel:active {
+        .carousel.dragging {
+            transition: none;
             cursor: grabbing;
         }
         
@@ -368,6 +369,7 @@
             cursor: pointer;
             transition: background-color 0.3s;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         
         .quantity-btn:hover {
@@ -884,12 +886,6 @@
             'doces': 0
         };
 
-        // Variáveis para controle do touch
-        let isDragging = false;
-        let startPosition = 0;
-        let currentTranslate = 0;
-        let prevTranslate = 0;
-
         // Inicializar carrosséis
         function inicializarCarrosseis() {
             for (const categoria in produtos) {
@@ -933,13 +929,15 @@
                     carrinho[chave] = 0;
                 });
 
-                // Adicionar eventos de touch
-                adicionarEventosTouch(carousel, categoria);
+                // Adicionar eventos de touch com resistência
+                adicionarEventosTouchResistentes(carousel, categoria);
             }
             
             // Configurar botões de quantidade
             document.querySelectorAll('.quantity-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Impede que o evento se propague para o carrossel
+                    
                     const categoria = this.dataset.categoria;
                     const index = parseInt(this.dataset.index);
                     const chave = `${categoria}-${index}`;
@@ -970,43 +968,58 @@
             });
         }
 
-        // Função para adicionar eventos de touch
-        function adicionarEventosTouch(carousel, categoria) {
+        // Função para adicionar eventos de touch com resistência
+        function adicionarEventosTouchResistentes(carousel, categoria) {
             let startX = 0;
             let currentX = 0;
+            let isDragging = false;
+            const THRESHOLD = 100; // Distância mínima para considerar um gesto válido (aumentado)
             
             carousel.addEventListener('touchstart', (e) => {
                 startX = e.touches[0].clientX;
                 carousel.style.transition = 'none';
-            });
+                isDragging = true;
+            }, { passive: true });
             
             carousel.addEventListener('touchmove', (e) => {
-                if (!startX) return;
+                if (!isDragging) return;
+                
                 currentX = e.touches[0].clientX;
                 const diff = startX - currentX;
-                carousel.style.transform = `translateX(-${carouselPositions[categoria] + diff}px)`;
-            });
+                
+                // Aplicar resistência - só move significativamente após o threshold
+                const resistance = Math.abs(diff) < THRESHOLD ? diff * 0.3 : diff;
+                carousel.style.transform = `translateX(-${carouselPositions[categoria] + resistance}px)`;
+            }, { passive: true });
             
             carousel.addEventListener('touchend', (e) => {
-                if (!startX) return;
+                if (!isDragging) return;
                 
                 const cardWidth = 310;
                 const totalCards = produtos[categoria].length;
                 const diff = startX - currentX;
                 const direction = diff > 0 ? 1 : -1;
                 
-                // Se o movimento foi significativo, mudar de slide
-                if (Math.abs(diff) > 50) {
+                // Só muda de slide se o gesto foi significativo
+                if (Math.abs(diff) > THRESHOLD) {
                     moverCarrossel(categoria, direction, totalCards, cardWidth);
                 } else {
-                    // Voltar para a posição original
-                    carousel.style.transition = 'transform 0.5s ease';
+                    // Voltar para a posição original com animação
+                    carousel.style.transition = 'transform 0.3s ease';
                     carousel.style.transform = `translateX(-${carouselPositions[categoria]}px)`;
                 }
                 
+                isDragging = false;
                 startX = 0;
                 currentX = 0;
-            });
+            }, { passive: true });
+
+            // Prevenir comportamento padrão de scroll horizontal
+            carousel.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
         }
 
         // Função para mover o carrossel
