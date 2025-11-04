@@ -26,6 +26,7 @@
             background-color: var(--light-color);
             color: var(--text-color);
             line-height: 1.6;
+            overflow-x: hidden;
         }
         
         .container {
@@ -271,11 +272,21 @@
             position: relative;
             overflow: hidden;
             padding: 20px 0;
+            -webkit-overflow-scrolling: touch;
         }
         
         .carousel {
             display: flex;
             transition: transform 0.5s ease;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .carousel:active {
+            cursor: grabbing;
         }
         
         .product-card {
@@ -289,6 +300,7 @@
             position: relative;
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
         }
         
         .product-card:hover {
@@ -355,6 +367,7 @@
             font-size: 1.2rem;
             cursor: pointer;
             transition: background-color 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .quantity-btn:hover {
@@ -386,6 +399,7 @@
             z-index: 10;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .carousel-btn:hover {
@@ -398,6 +412,26 @@
         
         .carousel-btn.next {
             right: 10px;
+        }
+        
+        /* Indicadores do carrossel para mobile */
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        
+        .carousel-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ddd;
+            transition: background-color 0.3s;
+        }
+        
+        .carousel-indicator.active {
+            background-color: var(--accent-color);
         }
         
         /* Contato */
@@ -609,6 +643,30 @@
             .carousel-btn {
                 display: none;
             }
+            
+            .product-card {
+                min-width: 260px;
+                margin: 0 10px;
+            }
+            
+            .carousel-indicators {
+                display: flex;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .product-card {
+                min-width: 220px;
+                margin: 0 8px;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -690,6 +748,7 @@
                         <!-- Bolos serão inseridos via JavaScript -->
                     </div>
                     <button class="carousel-btn next">❯</button>
+                    <div class="carousel-indicators" id="bolos-indicators"></div>
                 </div>
             </div>
             
@@ -702,6 +761,7 @@
                         <!-- Mousses serão inseridos via JavaScript -->
                     </div>
                     <button class="carousel-btn next">❯</button>
+                    <div class="carousel-indicators" id="mousses-indicators"></div>
                 </div>
             </div>
             
@@ -714,6 +774,7 @@
                         <!-- Doces serão inseridos via JavaScript -->
                     </div>
                     <button class="carousel-btn next">❯</button>
+                    <div class="carousel-indicators" id="doces-indicators"></div>
                 </div>
             </div>
         </div>
@@ -823,10 +884,25 @@
             'doces': 0
         };
 
+        // Variáveis para controle do touch
+        let isDragging = false;
+        let startPosition = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+
         // Inicializar carrosséis
         function inicializarCarrosseis() {
             for (const categoria in produtos) {
                 const carousel = document.getElementById(`${categoria}-carousel`);
+                const indicatorsContainer = document.getElementById(`${categoria}-indicators`);
+                
+                // Criar indicadores
+                for (let i = 0; i < produtos[categoria].length; i++) {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'carousel-indicator';
+                    if (i === 0) indicator.classList.add('active');
+                    indicatorsContainer.appendChild(indicator);
+                }
                 
                 // Duplicar itens para criar efeito infinito
                 const itensDuplicados = [...produtos[categoria], ...produtos[categoria]];
@@ -856,6 +932,9 @@
                     const chave = `${categoria}-${index}`;
                     carrinho[chave] = 0;
                 });
+
+                // Adicionar eventos de touch
+                adicionarEventosTouch(carousel, categoria);
             }
             
             // Configurar botões de quantidade
@@ -886,23 +965,77 @@
                     const direction = this.classList.contains('next') ? 1 : -1;
                     const totalCards = produtos[categoria].length;
                     
-                    // Calcular nova posição
-                    let newPosition = carouselPositions[categoria] + (direction * cardWidth * 3);
-                    
-                    // Limitar a posição para criar efeito infinito
-                    const maxPosition = (totalCards * cardWidth);
-                    
-                    if (newPosition >= maxPosition) {
-                        newPosition = 0;
-                    } else if (newPosition < 0) {
-                        newPosition = maxPosition - cardWidth * 3;
-                    }
-                    
-                    // Aplicar transformação
-                    carousel.style.transform = `translateX(-${newPosition}px)`;
-                    carouselPositions[categoria] = newPosition;
+                    moverCarrossel(categoria, direction, totalCards, cardWidth);
                 });
             });
+        }
+
+        // Função para adicionar eventos de touch
+        function adicionarEventosTouch(carousel, categoria) {
+            let startX = 0;
+            let currentX = 0;
+            
+            carousel.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                carousel.style.transition = 'none';
+            });
+            
+            carousel.addEventListener('touchmove', (e) => {
+                if (!startX) return;
+                currentX = e.touches[0].clientX;
+                const diff = startX - currentX;
+                carousel.style.transform = `translateX(-${carouselPositions[categoria] + diff}px)`;
+            });
+            
+            carousel.addEventListener('touchend', (e) => {
+                if (!startX) return;
+                
+                const cardWidth = 310;
+                const totalCards = produtos[categoria].length;
+                const diff = startX - currentX;
+                const direction = diff > 0 ? 1 : -1;
+                
+                // Se o movimento foi significativo, mudar de slide
+                if (Math.abs(diff) > 50) {
+                    moverCarrossel(categoria, direction, totalCards, cardWidth);
+                } else {
+                    // Voltar para a posição original
+                    carousel.style.transition = 'transform 0.5s ease';
+                    carousel.style.transform = `translateX(-${carouselPositions[categoria]}px)`;
+                }
+                
+                startX = 0;
+                currentX = 0;
+            });
+        }
+
+        // Função para mover o carrossel
+        function moverCarrossel(categoria, direction, totalCards, cardWidth) {
+            const carousel = document.getElementById(`${categoria}-carousel`);
+            const indicators = document.querySelectorAll(`#${categoria}-indicators .carousel-indicator`);
+            
+            // Calcular nova posição
+            let newPosition = carouselPositions[categoria] + (direction * cardWidth * 3);
+            
+            // Limitar a posição para criar efeito infinito
+            const maxPosition = (totalCards * cardWidth);
+            
+            if (newPosition >= maxPosition) {
+                newPosition = 0;
+            } else if (newPosition < 0) {
+                newPosition = maxPosition - cardWidth * 3;
+            }
+            
+            // Atualizar indicadores
+            const activeIndex = Math.floor(newPosition / (cardWidth * 3));
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === activeIndex);
+            });
+            
+            // Aplicar transformação
+            carousel.style.transition = 'transform 0.5s ease';
+            carousel.style.transform = `translateX(-${newPosition}px)`;
+            carouselPositions[categoria] = newPosition;
         }
 
         // Atualizar subtotal
