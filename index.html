@@ -272,7 +272,6 @@
             position: relative;
             overflow: hidden;
             padding: 20px 0;
-            -webkit-overflow-scrolling: touch;
         }
         
         .carousel {
@@ -282,7 +281,9 @@
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
-            touch-action: pan-y; /* Permite apenas scroll vertical */
+            touch-action: pan-y;
+            gap: 20px;
+            padding: 0 10px;
         }
         
         .product-card {
@@ -292,11 +293,10 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s;
             min-width: 280px;
-            margin: 0 15px;
+            flex-shrink: 0;
             position: relative;
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
         }
         
         .product-card:hover {
@@ -379,7 +379,7 @@
             text-align: center;
         }
         
-        /* Setas do carrossel - VISÍVEIS EM MOBILE */
+        /* Setas do carrossel */
         .carousel-btn {
             position: absolute;
             top: 50%;
@@ -403,6 +403,11 @@
         .carousel-btn:hover {
             background-color: white;
             transform: translateY(-50%) scale(1.1);
+        }
+        
+        .carousel-btn.hidden {
+            opacity: 0.3;
+            pointer-events: none;
         }
         
         .carousel-btn.prev {
@@ -656,8 +661,7 @@
             }
             
             .product-card {
-                min-width: 260px;
-                margin: 0 10px;
+                min-width: calc(50% - 20px);
             }
             
             .carousel-indicators {
@@ -667,8 +671,7 @@
         
         @media (max-width: 480px) {
             .product-card {
-                min-width: 220px;
-                margin: 0 8px;
+                min-width: calc(100% - 20px);
             }
             
             .hero h1 {
@@ -683,6 +686,29 @@
                 width: 40px;
                 height: 40px;
                 font-size: 1.2rem;
+            }
+            
+            .carousel {
+                gap: 15px;
+                padding: 0 5px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .carousel {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 25px;
+                transform: none !important;
+            }
+            
+            .carousel-btn {
+                display: none;
+            }
+            
+            .product-card {
+                min-width: 280px;
+                flex: 0 0 auto;
             }
         }
     </style>
@@ -760,11 +786,11 @@
             <div class="carousel-section">
                 <h3 style="text-align: center; margin-bottom: 20px; color: var(--secondary-color);">🍰 Bolos</h3>
                 <div class="carousel-container">
-                    <button class="carousel-btn prev">❮</button>
+                    <button class="carousel-btn prev hidden" id="bolos-prev">❮</button>
                     <div class="carousel" id="bolos-carousel">
                         <!-- Bolos serão inseridos via JavaScript -->
                     </div>
-                    <button class="carousel-btn next">❯</button>
+                    <button class="carousel-btn next" id="bolos-next">❯</button>
                     <div class="carousel-indicators" id="bolos-indicators"></div>
                 </div>
             </div>
@@ -773,11 +799,11 @@
             <div class="carousel-section">
                 <h3 style="text-align: center; margin-bottom: 20px; color: var(--secondary-color);">🍮 Mousses</h3>
                 <div class="carousel-container">
-                    <button class="carousel-btn prev">❮</button>
+                    <button class="carousel-btn prev hidden" id="mousses-prev">❮</button>
                     <div class="carousel" id="mousses-carousel">
                         <!-- Mousses serão inseridos via JavaScript -->
                     </div>
-                    <button class="carousel-btn next">❯</button>
+                    <button class="carousel-btn next" id="mousses-next">❯</button>
                     <div class="carousel-indicators" id="mousses-indicators"></div>
                 </div>
             </div>
@@ -786,11 +812,11 @@
             <div class="carousel-section">
                 <h3 style="text-align: center; margin-bottom: 20px; color: var(--secondary-color);">🍯 Doces e Delícias</h3>
                 <div class="carousel-container">
-                    <button class="carousel-btn prev">❮</button>
+                    <button class="carousel-btn prev hidden" id="doces-prev">❮</button>
                     <div class="carousel" id="doces-carousel">
                         <!-- Doces serão inseridos via JavaScript -->
                     </div>
-                    <button class="carousel-btn next">❯</button>
+                    <button class="carousel-btn next" id="doces-next">❯</button>
                     <div class="carousel-indicators" id="doces-indicators"></div>
                 </div>
             </div>
@@ -906,6 +932,8 @@
             for (const categoria in produtos) {
                 const carousel = document.getElementById(`${categoria}-carousel`);
                 const indicatorsContainer = document.getElementById(`${categoria}-indicators`);
+                const prevBtn = document.getElementById(`${categoria}-prev`);
+                const nextBtn = document.getElementById(`${categoria}-next`);
                 
                 // Criar indicadores
                 for (let i = 0; i < produtos[categoria].length; i++) {
@@ -915,10 +943,8 @@
                     indicatorsContainer.appendChild(indicator);
                 }
                 
-                // Duplicar itens para criar efeito infinito
-                const itensDuplicados = [...produtos[categoria], ...produtos[categoria]];
-                
-                itensDuplicados.forEach((produto, index) => {
+                // Adicionar produtos ao carrossel
+                produtos[categoria].forEach((produto, index) => {
                     const productCard = document.createElement('div');
                     productCard.className = 'product-card';
                     productCard.innerHTML = `
@@ -929,9 +955,9 @@
                             <h3>${produto.nome}</h3>
                             <div class="price">R$ ${produto.preco.toFixed(2).replace('.', ',')}</div>
                             <div class="quantity-controls">
-                                <button class="quantity-btn minus" data-categoria="${categoria}" data-index="${index % produtos[categoria].length}">-</button>
-                                <div class="quantity-display" id="qty-${categoria}-${index % produtos[categoria].length}">0</div>
-                                <button class="quantity-btn plus" data-categoria="${categoria}" data-index="${index % produtos[categoria].length}">+</button>
+                                <button class="quantity-btn minus" data-categoria="${categoria}" data-index="${index}">-</button>
+                                <div class="quantity-display" id="qty-${categoria}-${index}">0</div>
+                                <button class="quantity-btn plus" data-categoria="${categoria}" data-index="${index}">+</button>
                             </div>
                         </div>
                     `;
@@ -943,12 +969,15 @@
                     const chave = `${categoria}-${index}`;
                     carrinho[chave] = 0;
                 });
+
+                // Verificar se precisa de carrossel (apenas para mobile/tablet)
+                verificarNecessidadeCarrossel(categoria, prevBtn, nextBtn);
             }
             
             // Configurar botões de quantidade
             document.querySelectorAll('.quantity-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
-                    e.stopPropagation(); // Impede que o evento se propague para o carrossel
+                    e.stopPropagation();
                     
                     const categoria = this.dataset.categoria;
                     const index = parseInt(this.dataset.index);
@@ -968,37 +997,63 @@
             // Configurar botões de navegação do carrossel
             document.querySelectorAll('.carousel-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const container = this.parentElement;
-                    const categoria = container.querySelector('.carousel').id.split('-')[0];
-                    const carousel = container.querySelector('.carousel');
-                    const cardWidth = 310; // Largura do card + margem
+                    const categoria = this.id.split('-')[0];
                     const direction = this.classList.contains('next') ? 1 : -1;
+                    const cardWidth = 300; // Largura do card + gap
                     const totalCards = produtos[categoria].length;
                     
                     moverCarrossel(categoria, direction, totalCards, cardWidth);
                 });
             });
+
+            // Verificar redimensionamento da tela
+            window.addEventListener('resize', function() {
+                for (const categoria in produtos) {
+                    const prevBtn = document.getElementById(`${categoria}-prev`);
+                    const nextBtn = document.getElementById(`${categoria}-next`);
+                    verificarNecessidadeCarrossel(categoria, prevBtn, nextBtn);
+                }
+            });
+        }
+
+        // Verificar se precisa de carrossel
+        function verificarNecessidadeCarrossel(categoria, prevBtn, nextBtn) {
+            const carousel = document.getElementById(`${categoria}-carousel`);
+            const container = carousel.parentElement;
+            
+            if (window.innerWidth >= 1200) {
+                // Desktop - mostrar todos os itens
+                carousel.style.transform = 'none';
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+            } else {
+                // Mobile/Tablet - ativar carrossel
+                carouselPositions[categoria] = 0;
+                carousel.style.transform = 'translateX(0)';
+                atualizarBotoesCarrossel(categoria);
+            }
         }
 
         // Função para mover o carrossel
         function moverCarrossel(categoria, direction, totalCards, cardWidth) {
+            if (window.innerWidth >= 1200) return;
+            
             const carousel = document.getElementById(`${categoria}-carousel`);
+            const container = carousel.parentElement;
             const indicators = document.querySelectorAll(`#${categoria}-indicators .carousel-indicator`);
             
+            // Calcular quantos cards cabem na tela
+            const cardsPerView = Math.floor(container.offsetWidth / cardWidth);
+            
             // Calcular nova posição
-            let newPosition = carouselPositions[categoria] + (direction * cardWidth * 3);
+            let newPosition = carouselPositions[categoria] + (direction * cardsPerView * cardWidth);
             
-            // Limitar a posição para criar efeito infinito
-            const maxPosition = (totalCards * cardWidth);
-            
-            if (newPosition >= maxPosition) {
-                newPosition = 0;
-            } else if (newPosition < 0) {
-                newPosition = maxPosition - cardWidth * 3;
-            }
+            // Limitar a posição (sem loop infinito)
+            const maxPosition = Math.max(0, (totalCards - cardsPerView) * cardWidth);
+            newPosition = Math.max(0, Math.min(newPosition, maxPosition));
             
             // Atualizar indicadores
-            const activeIndex = Math.floor(newPosition / (cardWidth * 3));
+            const activeIndex = Math.floor(newPosition / (cardWidth * cardsPerView));
             indicators.forEach((indicator, index) => {
                 indicator.classList.toggle('active', index === activeIndex);
             });
@@ -1007,6 +1062,35 @@
             carousel.style.transition = 'transform 0.5s ease';
             carousel.style.transform = `translateX(-${newPosition}px)`;
             carouselPositions[categoria] = newPosition;
+            
+            // Atualizar estado dos botões
+            atualizarBotoesCarrossel(categoria);
+        }
+
+        // Atualizar estado dos botões do carrossel
+        function atualizarBotoesCarrossel(categoria) {
+            if (window.innerWidth >= 1200) return;
+            
+            const prevBtn = document.getElementById(`${categoria}-prev`);
+            const nextBtn = document.getElementById(`${categoria}-next`);
+            const container = document.getElementById(`${categoria}-carousel`).parentElement;
+            const totalCards = produtos[categoria].length;
+            const cardWidth = 300;
+            const cardsPerView = Math.floor(container.offsetWidth / cardWidth);
+            const maxPosition = Math.max(0, (totalCards - cardsPerView) * cardWidth);
+            
+            // Mostrar/ocultar botões conforme a posição
+            if (carouselPositions[categoria] <= 0) {
+                prevBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+            }
+            
+            if (carouselPositions[categoria] >= maxPosition) {
+                nextBtn.classList.add('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+            }
         }
 
         // Atualizar subtotal
